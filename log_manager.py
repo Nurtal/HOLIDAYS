@@ -87,6 +87,49 @@ def add_entry(entry):
 	log_file.close()
 
 
+
+
+def get_a_nice_message(log_file):
+	"""
+	IN PROGRESS
+	"""
+
+	possible_salutation = ["Hey Boss!",
+						   "Still up and Running !"]
+
+	salutation = possible_salutation[random.randint(0,len(possible_salutation))]
+
+	## Get informations on log file
+	analysis_performed = 0
+	analysis_skipped = 0
+	log_file = open(log_file, "r")
+	for line in log_file:
+		line = line.replace("\n", "")
+
+		## count the number of analysis performed
+		line_in_array = line.split("[+] Run analysis")
+		if (len(line_in_array) > 1):
+			analysis_performed += 1
+
+		## count the number of case skipped:
+		line_in_array = line.split("Skip case")
+		if (len(line_in_array) > 1):
+			analysis_skipped += 1
+	log_file.close()
+
+	## Create message
+	text = str(analysis_performed) +" analysis were performed yesterday, "+str(analysis_skipped)+" were skipped."
+	if(analysis_skipped < 10):
+		text += " I am keeping this cpu busy !"
+	elif(analysis_performed < 10):
+		text += "Yeah ... a lot of NA ..."
+
+	## assemble message
+	final_message = salutation+"\n"+text
+
+	return final_message
+
+
 def send_log_file(log_file):
 	"""
 	-> Send log files by email
@@ -168,3 +211,8 @@ def monitoring_log():
 		manifeste_file = open("log/log_send.csv", "a")
 		manifeste_file.write(f+"\n")
 		manifeste_file.close()
+
+
+
+truc = get_a_nice_message("log/28_7_2017.log")
+print truc
