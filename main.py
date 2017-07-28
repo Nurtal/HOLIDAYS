@@ -72,7 +72,8 @@ for line in suggestions_file:
 		## Log entry
 		log_manager.add_entry("[-] Skip case "+str(suggestion_id) +", not enough patients in file")
 
-
+	## Check on log
+	log_manager.monitoring_log()
 
 
 
