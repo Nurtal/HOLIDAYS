@@ -3,6 +3,7 @@ main holdays
 """
 
 import shutil
+import os
 
 import analysis
 import report
@@ -11,7 +12,7 @@ import log_manager
 import holidays
 
 
-input_data_file = "input/input_test2.csv"
+input_data_file = "input/transmart.txt"
 
 ##-----------------------------##
 ## Preprocessing the data file ##
@@ -21,7 +22,9 @@ holidays.clean_data_folder()
 holidays.clean_reports_folder()
 input_data_file = file_manager.fix_file_name(input_data_file)
 file_manager.change_file_format(input_data_file, ",")
-input_data_file = input_data_file.replace(".csv", "_reformated.csv")
+original_extention = input_data_file.split(".")
+original_extention = original_extention[-1]
+input_data_file = input_data_file.replace("."+str(original_extention), "_reformated.csv")
 shutil.copy(input_data_file, "data/complete_data.csv")
 
 
@@ -68,12 +71,39 @@ for line in suggestions_file:
 
 		## Compile report
 		report.compile_report("output/reports/LDA_report_case_"+str(suggestion_id)+".tex")
+
+		## Save to other computers
+		report_have_been_saved = False
+		absolute_path_to_file = os.path.abspath("output/reports/LDA_report_case_"+str(suggestion_id)+".pdf")
+
+		## Try the first server
+		uploadStatus = holidays.uploadfile(absolute_path_to_file, "http://195.83.246.52:8000", "upfile")
+		if(uploadStatus == 200):
+			log_manager.add_entry("[+] Saved report for case "+str(suggestion_id)+" on server 1")
+			report_have_been_saved = True
+
+		## Try the second server if the first failed
+		else:
+			uploadStatus = holidays.uploadfile(absolute_path_to_file, "http://195.83.246.20:8000", "upfile")
+			if(uploadStatus == 200):
+				log_manager.add_entry("[+] Saved report for case "+str(suggestion_id)+" on server 2")
+				report_have_been_saved = True
+
+		## Delete report from local storage if it has been saved elsewhere
+		if(report_have_been_saved):
+			os.remove(absolute_path_to_file)
+		else:
+			log_manager.add_entry("[!] Fail to save report for case "+str(suggestion_id)+" on a distant server")
+
+		## Check the space left on the hard drive
+
 	else:
 		## Log entry
 		log_manager.add_entry("[-] Skip case "+str(suggestion_id) +", not enough patients in file")
 
+
 	## Check on log
-	#log_manager.monitoring_log()
+	log_manager.monitoring_log()
 
 
 

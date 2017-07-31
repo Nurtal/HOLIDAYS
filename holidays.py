@@ -6,6 +6,8 @@ Project
 import itertools
 import glob
 import os
+import urllib
+import requests
 
 def build_data_file_from(explain_variable, descriptives_variable, data_file, output_name):
 	"""
@@ -223,28 +225,11 @@ def clean_images_folder():
 		os.remove(f)
 
 
-
-
-
-
-
-
-
-
-
-## TEST SPACE
-#variables = get_description_of_variables("input/input_test.csv")
-#generate_all_possible_combinations(variables["qualitative"], variables["quantitative"])
-
-
-import urllib
-import requests
-
 def uploadfile(filepath, uploadurl, fileformelementname="upfile"):
-    '''
-    This will invoke an upload to the webserver
-    on the VM
-    '''
+    """
+    -> This will invoke an upload to the webserver
+    	on the VM
+    """
  
     files = {fileformelementname : open(filepath,'rb')}
     r = requests.post(uploadurl, files=files)
@@ -253,16 +238,11 @@ def uploadfile(filepath, uploadurl, fileformelementname="upfile"):
 
 
 def downloadfile(filename, dloadurl, outputdirectory):
-    '''
+    """
     Pull the converted file off the droopy server
-    '''
+    """
  
     fullurl = urljoin(dloadurl, filename)
     fulloutputpath = os.path.join(outputdirectory, 'divided', filename)
  
     urllib.urlretrieve(fullurl, fulloutputpath)
-
-
-
-#downloadfile(currentFile.outputName, DOWNLOADURL, IMGDIR)
-#uploadStatus = uploadfile("C:/Users/Doctorant/Desktop/Nathan/Spellcraft/HOLIDAYS/up_test.txt", "http://195.83.246.52:8000", "upfile")

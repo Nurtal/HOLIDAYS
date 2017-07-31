@@ -6,6 +6,7 @@ import os
 import glob
 import datetime
 import platform
+import psutil
 
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
@@ -91,15 +92,22 @@ def add_entry(entry):
 
 def get_a_nice_message(log_file):
 	"""
-	IN PROGRESS
+	-> Parse log file, scan available disk space
+	   and create a nice message for the update email
 	"""
 
 	possible_salutation = ["Hey Boss!",
-						   "Still up and Running !"]
+						   "Still up and Running !",
+						   "Still working",
+						   "Keeping the CPU busy !",
+						   "Another great day for Science ...",
+						   "Lok'tar Ogar",
+						   "Bal'a dash, malanore"]
 
-	salutation = possible_salutation[random.randint(0,len(possible_salutation))]
+	salutation = possible_salutation[random.randint(0,len(possible_salutation)-1)]
 
 	## Get informations on log file
+	server_id = []
 	analysis_performed = 0
 	analysis_skipped = 0
 	log_file = open(log_file, "r")
@@ -115,10 +123,37 @@ def get_a_nice_message(log_file):
 		line_in_array = line.split("Skip case")
 		if (len(line_in_array) > 1):
 			analysis_skipped += 1
+
+		## check server status
+		line_in_array = line.split("server ")
+		if (len(line_in_array) > 1):
+			server_id.append(line_in_array[1])
+	
 	log_file.close()
+	
+	## message for server status
+	last_server_id = server_id[-1]
+	server_news = ""
+	if(last_server_id == "1"):
+		server_news = "Server 1 Up and Running."
+	elif(last_server_id == "2"):
+		server_news = "Server 1 is down, Server 2 Up and Running." 
+	else:
+		server_news = "Server 1 and Server 2 are down."
+
+	
+	## information on hard drive capacity
+	free_space = psutil.disk_usage(".").free
+	free_space = free_space / 1024 #ko
+	free_space = free_space / 1024 #Mo
+	free_space = free_space / 1024 #Go
+	disk_news = "Space available on disk: " +str(free_space) +" Go."
+
 
 	## Create message
-	text = str(analysis_performed) +" analysis were performed yesterday, "+str(analysis_skipped)+" were skipped."
+	text = str(analysis_performed) +" analysis were performed yesterday, "+str(analysis_skipped)+" were skipped.\n"
+	text += "Server status for yesterday: "+str(server_news)+"\n"
+	text += disk_news
 	if(analysis_skipped < 10):
 		text += " I am keeping this cpu busy !"
 	elif(analysis_performed < 10):
@@ -134,8 +169,7 @@ def send_log_file(log_file):
 	"""
 	-> Send log files by email
 	-> TODO:
-		- Update the message, add randomness, be nice
-		- Don'y forget to set passwd variable !
+		- Don't forget to set passwd variable !
 	"""
 
 	fromaddr = "nathan.foulquier@cervval.com"
@@ -214,5 +248,3 @@ def monitoring_log():
 
 
 
-truc = get_a_nice_message("log/28_7_2017.log")
-print truc
