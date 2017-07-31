@@ -14,6 +14,11 @@ def write_lda_report(report_file):
 	-> section 1 is an overview of the data
 	-> section 2 privide informations on the LDA
 	-> section 3 is a 2D representation of the data using LDA
+
+	- TODO:
+		- Find a way to get absolute path on windows for the image files,
+		  for now path is store as a prefix directly in the code
+
 	IN PROGRESS
 	"""
 
@@ -48,6 +53,10 @@ def write_lda_report(report_file):
 	for image in list_of_scatterplot:
 		image = image.split(".")
 		image = image[0]
+		if(platform.system() == "Windows"):
+			image = image.replace("\\", "/")
+			prefix = "C:/Users/PC_immuno/Desktop/Nathan/SpellCraft/HOLIDAYS/"
+			image = prefix + image
 		output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\ \n")
 	output_file.write("\\end{tabular}\n")
 
@@ -124,6 +133,10 @@ def write_lda_report(report_file):
 	for image in list_of_LDA:
 		image = image.split(".")
 		image = image[0]
+		if(platform.system() == "Windows"):
+			image = image.replace("\\", "/")
+			prefix = "C:/Users/PC_immuno/Desktop/Nathan/SpellCraft/HOLIDAYS/"
+			image = prefix + image
 		output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\\n")
 	output_file.write("\\end{tabular}\n")
 
@@ -186,7 +199,13 @@ def write_lda_report(report_file):
 	output_file.write("\\section{2D representation}\n")
 	output_file.write("\\begin{center}\n")
 	output_file.write("\\begin{tabular}{c}\n")
-	output_file.write("\\includegraphics[scale=0.5]{\"output/images/LDA_visualisation\"}\\\\\n")
+	if(platform.system() == "Windows"):
+			image = image.replace("\\", "/")
+			prefix = "C:/Users/PC_immuno/Desktop/Nathan/SpellCraft/HOLIDAYS/"
+			image = prefix + "output/images/LDA_visualisation"
+	else:
+		image = "output/images/LDA_visualisation"
+	output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\\n")
 	output_file.write("scatterplot of the best two discriminant functions\n")
 	output_file.write("\\end{tabular}\n")
 	output_file.write("\\end{center}\n")
@@ -200,27 +219,50 @@ def write_lda_report(report_file):
 
 def compile_report(tex_file_name):
 	"""
-	-> Create a pdf file from the tex file, 
-	   work on linux only for now.
-
-	TODO:
-		- find a windows solution
+	-> Create a pdf file from the tex file.
+	-> Delete the tex file and all log, aux files
+	   generated during the compilation
+	-> move pdf file in output/reports folder
 	"""	
 
 	if(platform.system() == "Windows"):
-		print "Work in Progress"
+
+		## Compile with pdflatex
+		os.system("pdflatex " +str(tex_file_name))
+
+		## remove .aux files
+		file_to_remove = glob.glob("*.aux")
+		for f in file_to_remove:
+			os.remove(f)
+
+		## remove .log files
+		file_to_remove = glob.glob("*.log")
+		for f in file_to_remove:
+			os.remove(f)
+
+		## delete tex file
+		os.remove(tex_file_name)
+
+		## Move pdf file
+		pdf_file_destination = tex_file_name.replace(".tex", ".pdf")
+		pdf_file = tex_file_name.split("/")
+		pdf_file = pdf_file[-1]
+		pdf_file = pdf_file.replace(".tex", ".pdf")
+		shutil.copy(pdf_file, pdf_file_destination)
+		os.remove(pdf_file)
+
+
 	elif(platform.system() == "Linux"):
 		
-
 		 ## Compile with rubber
 		 os.system("rubber -q --pdf "+str(tex_file_name))
 
-		 ## remove .aux pdf files
+		 ## remove .aux files
 		 file_to_remove = glob.glob("*.aux")
 		 for f in file_to_remove:
 		 	os.remove(f)
 
-		 ## remove .log pdf files
+		 ## remove .log files
 		 file_to_remove = glob.glob("*.log")
 		 for f in file_to_remove:
 		 	os.remove(f)
