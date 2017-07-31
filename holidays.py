@@ -237,6 +237,9 @@ def clean_images_folder():
 #generate_all_possible_combinations(variables["qualitative"], variables["quantitative"])
 
 
+import urllib
+import requests
+
 def uploadfile(filepath, uploadurl, fileformelementname="upfile"):
     '''
     This will invoke an upload to the webserver
@@ -262,4 +265,4 @@ def downloadfile(filename, dloadurl, outputdirectory):
 
 
 #downloadfile(currentFile.outputName, DOWNLOADURL, IMGDIR)
-#uploadStatus = uploadfile(currentFile.fullpath, UPLOADURL, "upfile")
+#uploadStatus = uploadfile("C:/Users/Doctorant/Desktop/Nathan/Spellcraft/HOLIDAYS/up_test.txt", "http://195.83.246.52:8000", "upfile")
