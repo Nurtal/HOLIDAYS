@@ -226,6 +226,40 @@ def clean_images_folder():
 
 
 
+
+
+
+
+
+
 ## TEST SPACE
 #variables = get_description_of_variables("input/input_test.csv")
 #generate_all_possible_combinations(variables["qualitative"], variables["quantitative"])
+
+
+def uploadfile(filepath, uploadurl, fileformelementname="upfile"):
+    '''
+    This will invoke an upload to the webserver
+    on the VM
+    '''
+ 
+    files = {fileformelementname : open(filepath,'rb')}
+    r = requests.post(uploadurl, files=files)
+    return r.status_code
+
+
+
+def downloadfile(filename, dloadurl, outputdirectory):
+    '''
+    Pull the converted file off the droopy server
+    '''
+ 
+    fullurl = urljoin(dloadurl, filename)
+    fulloutputpath = os.path.join(outputdirectory, 'divided', filename)
+ 
+    urllib.urlretrieve(fullurl, fulloutputpath)
+
+
+
+#downloadfile(currentFile.outputName, DOWNLOADURL, IMGDIR)
+#uploadStatus = uploadfile(currentFile.fullpath, UPLOADURL, "upfile")
