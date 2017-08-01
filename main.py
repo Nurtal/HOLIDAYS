@@ -14,7 +14,7 @@ import holidays
 
 #input_data_file = "input/input_test2.csv"
 input_data_file = "input/transmart.txt"
-
+work_station = "cervval"
 
 ##-----------------------------##
 ## Preprocessing the data file ##
@@ -81,18 +81,20 @@ for line in suggestions_file:
 		report_have_been_saved = False
 		absolute_path_to_file = os.path.abspath("output/reports/LDA_report_case_"+str(suggestion_id)+".pdf")
 
-		## Try the first server
-		uploadStatus = holidays.uploadfile(absolute_path_to_file, "http://195.83.246.52:8000", "upfile")
-		if(uploadStatus == 200):
-			log_manager.add_entry("[+] Saved report for case "+str(suggestion_id)+" on server 1")
-			report_have_been_saved = True
+		if(work_station != "cervval"):
 
-		## Try the second server if the first failed
-		else:
-			uploadStatus = holidays.uploadfile(absolute_path_to_file, "http://195.83.246.20:8000", "upfile")
+			## Try the first server
+			uploadStatus = holidays.uploadfile(absolute_path_to_file, "http://195.83.246.52:8000", "upfile")
 			if(uploadStatus == 200):
-				log_manager.add_entry("[+] Saved report for case "+str(suggestion_id)+" on server 2")
+				log_manager.add_entry("[+] Saved report for case "+str(suggestion_id)+" on server 1")
 				report_have_been_saved = True
+
+			## Try the second server if the first failed
+			else:
+				uploadStatus = holidays.uploadfile(absolute_path_to_file, "http://195.83.246.20:8000", "upfile")
+				if(uploadStatus == 200):
+					log_manager.add_entry("[+] Saved report for case "+str(suggestion_id)+" on server 2")
+					report_have_been_saved = True
 
 		## Delete report from local storage if it has been saved elsewhere
 		if(report_have_been_saved):
@@ -108,8 +110,9 @@ for line in suggestions_file:
 	## Check on log
 	log_manager.monitoring_log()
 
-
-
 suggestions_file.close()
 
+## Add end Message
+log_manager.add_entry("[*] End of Run\n")
+log_manager.send_end_message()
 

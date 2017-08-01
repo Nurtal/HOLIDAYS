@@ -21,6 +21,10 @@ import random
 import os.path
 from time import sleep
 
+
+passwd = FIXEME
+
+
 def init_logs():
 	"""
 	-> Clean the log folder
@@ -106,6 +110,15 @@ def get_a_nice_message(log_file):
 
 	salutation = possible_salutation[random.randint(0,len(possible_salutation)-1)]
 
+	## get the name of work station
+	station_name = ""
+	if(platform.system() == "Windows"):
+		station_name = "Morvan"
+	elif(platform.system() == "Linux"):
+		station_name = "Cervval"
+	station_id = "Report from "+str(station_name)+":\n"
+
+
 	## Get informations on log file
 	server_id = []
 	analysis_performed = 0
@@ -132,12 +145,13 @@ def get_a_nice_message(log_file):
 	log_file.close()
 	
 	## message for server status
-	last_server_id = server_id[-1]
-	server_news = ""
-	if(last_server_id == "1"):
-		server_news = "Server 1 Up and Running."
-	elif(last_server_id == "2"):
-		server_news = "Server 1 is down, Server 2 Up and Running." 
+	if(len(server_id) > 0):
+		last_server_id = server_id[-1]
+		server_news = ""
+		if(last_server_id == "1"):
+			server_news = "Server 1 Up and Running."
+		elif(last_server_id == "2"):
+			server_news = "Server 1 is down, Server 2 Up and Running." 
 	else:
 		server_news = "Server 1 and Server 2 are down."
 
@@ -155,12 +169,12 @@ def get_a_nice_message(log_file):
 	text += "Server status for yesterday: "+str(server_news)+"\n"
 	text += disk_news
 	if(analysis_skipped < 10):
-		text += " I am keeping this cpu busy !"
+		text += "\nI am keeping this cpu busy !"
 	elif(analysis_performed < 10):
-		text += "Yeah ... a lot of NA ..."
+		text += "\nYeah ... a lot of NA ..."
 
 	## assemble message
-	final_message = salutation+"\n"+text
+	final_message = salutation+"\n"+station_id+text
 
 	return final_message
 
@@ -174,7 +188,7 @@ def send_log_file(log_file):
 
 	fromaddr = "nathan.foulquier@cervval.com"
 	toaddr = "nathan.foulquier.pro@gmail.com"
-	passwd = FIXEME
+	#passwd = FIXEME
 
 	msg = MIMEMultipart()
 	msg['From'] = fromaddr
@@ -247,4 +261,34 @@ def monitoring_log():
 		manifeste_file.close()
 
 
+def send_end_message():
+	"""
+	-> Send an email when hit the end of the programm
+	"""
 
+	fromaddr = "nathan.foulquier@cervval.com"
+	toaddr = "nathan.foulquier.pro@gmail.com"
+	#passwd = FIXEME
+
+	msg = MIMEMultipart()
+	msg['From'] = fromaddr
+	msg['To'] = toaddr
+	msg['Subject'] = "EOF"
+ 
+	## get the name of work station
+	station_name = ""
+	if(platform.system() == "Windows"):
+		station_name = "Morvan"
+	elif(platform.system() == "Linux"):
+		station_name = "Cervval"
+
+	content = "Hey Boss,\n"+str(station_name)+": Work done."
+
+	msg.attach(MIMEText(content, 'plain'))
+	
+	server = smtplib.SMTP('smtp.gmail.com', 587)
+	server.starttls()
+	server.login(fromaddr, passwd)
+	text = msg.as_string()
+	server.sendmail(fromaddr, toaddr, text)
+	server.quit()
