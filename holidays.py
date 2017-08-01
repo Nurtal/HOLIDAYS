@@ -164,7 +164,7 @@ def get_description_of_variables(input_file):
 
 
 
-def generate_all_possible_combinations(explain_variables, descriptives_variables):
+def generate_all_possible_combinations(explain_variables, descriptives_variables, max_suggestions):
 	"""
 	-> generate all possibles combination of descriptives variables
 	   to explain each variables in explain_variables
@@ -180,14 +180,19 @@ def generate_all_possible_combinations(explain_variables, descriptives_variables
 		tupleLen = 4
 		while(tupleLen <= len(descriptives_variables)):
 			for h in itertools.combinations(descriptives_variables, tupleLen):
-				h = list(h)
-				h = header + h
-				line_to_write = ""
-				for elt in h:
-					line_to_write += str(elt)+","
-				line_to_write  =str(cmpt) +","+ line_to_write[:-1]
-				manifeste_file.write(line_to_write+"\n")
-				cmpt += 1
+
+				if(cmpt <= max_suggestions):
+					h = list(h)
+					h = header + h
+					line_to_write = ""
+					for elt in h:
+						line_to_write += str(elt)+","
+					line_to_write  =str(cmpt) +","+ line_to_write[:-1]
+					manifeste_file.write(line_to_write+"\n")
+					cmpt += 1
+				else:
+					break
+			
 			tupleLen += 1
 	manifeste_file.close()
 

@@ -14,7 +14,7 @@ import holidays
 
 #input_data_file = "input/input_test2.csv"
 input_data_file = "input/transmart.txt"
-work_station = "cervval"
+work_station = "CHU"
 
 ##-----------------------------##
 ## Preprocessing the data file ##
@@ -34,7 +34,7 @@ shutil.copy(input_data_file, "data/complete_data.csv")
 ## Run the analysis ##
 ##------------------##
 variables = holidays.get_description_of_variables("data/complete_data.csv")
-holidays.generate_all_possible_combinations(variables["qualitative"], variables["quantitative"], 10)
+holidays.generate_all_possible_combinations(variables["qualitative"], variables["quantitative"], 3)
 
 suggestions_file = open("data/suggestions.csv", "r")
 for line in suggestions_file:
@@ -73,7 +73,7 @@ for line in suggestions_file:
 
 		## Write a report on the analysis
 		report.write_lda_report("output/reports/LDA_report_case_"+str(suggestion_id)+".tex")
-
+		
 		## Compile report
 		report.compile_report("output/reports/LDA_report_case_"+str(suggestion_id)+".tex")
 
@@ -101,7 +101,6 @@ for line in suggestions_file:
 			os.remove(absolute_path_to_file)
 		else:
 			log_manager.add_entry("[!] Fail to save report for case "+str(suggestion_id)+" on a distant server")
-
 	else:
 		## Log entry
 		log_manager.add_entry("[-] Skip case "+str(suggestion_id) +", not enough patients in file")

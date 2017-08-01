@@ -57,7 +57,10 @@ def write_lda_report(report_file):
 			image = image.replace("\\", "/")
 			prefix = "C:/Users/PC_immuno/Desktop/Nathan/SpellCraft/HOLIDAYS/"
 			image = prefix + image
-		output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\ \n")
+		if(os.path.exists(image)):
+			output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\ \n")
+		else:
+			output_file.write("Image not found\\\\ \n")
 	output_file.write("\\end{tabular}\n")
 
 	## => Write some informations from files
@@ -137,7 +140,10 @@ def write_lda_report(report_file):
 			image = image.replace("\\", "/")
 			prefix = "C:/Users/PC_immuno/Desktop/Nathan/SpellCraft/HOLIDAYS/"
 			image = prefix + image
-		output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\\n")
+		if(os.path.exists(image)):
+			output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\ \n")
+		else:
+			output_file.write("Image not found\\\\ \n")
 	output_file.write("\\end{tabular}\n")
 
 	output_file.write("\\\\ \n")
@@ -200,12 +206,14 @@ def write_lda_report(report_file):
 	output_file.write("\\begin{center}\n")
 	output_file.write("\\begin{tabular}{c}\n")
 	if(platform.system() == "Windows"):
-			image = image.replace("\\", "/")
 			prefix = "C:/Users/PC_immuno/Desktop/Nathan/SpellCraft/HOLIDAYS/"
 			image = prefix + "output/images/LDA_visualisation"
 	else:
 		image = "output/images/LDA_visualisation"
-	output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\\n")
+	if(os.path.exists(image)):
+		output_file.write("\\includegraphics[scale=0.5]{\""+str(image)+"\"}\\\\ \n")
+	else:
+		output_file.write("Image not found\\\\ \n")
 	output_file.write("scatterplot of the best two discriminant functions\n")
 	output_file.write("\\end{tabular}\n")
 	output_file.write("\\end{center}\n")
