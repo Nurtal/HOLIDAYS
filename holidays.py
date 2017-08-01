@@ -232,8 +232,11 @@ def uploadfile(filepath, uploadurl, fileformelementname="upfile"):
     """
  
     files = {fileformelementname : open(filepath,'rb')}
-    r = requests.post(uploadurl, files=files)
-    return r.status_code
+    try:
+    	r = requests.post(uploadurl, files=files)
+    	return r.status_code
+    except:
+    	return -1
 
 
 
