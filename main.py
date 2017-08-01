@@ -12,8 +12,8 @@ import log_manager
 import holidays
 
 
-input_data_file = "input/input_test2.csv"
-#input_data_file = "input/transmart.txt"
+#input_data_file = "input/input_test2.csv"
+input_data_file = "input/transmart.txt"
 
 
 ##-----------------------------##
@@ -64,6 +64,9 @@ for line in suggestions_file:
 
 		## Log entry
 		log_manager.add_entry("[+] Run analysis for case "+str(suggestion_id))
+
+		## Prepare the R script
+		analysis.prepare_afd_script()
 
 		## Run the LDA analysis
 		analysis.run_afd("data/data.csv")
