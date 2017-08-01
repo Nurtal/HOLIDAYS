@@ -12,7 +12,9 @@ import log_manager
 import holidays
 
 
-input_data_file = "input/transmart.txt"
+input_data_file = "input/input_test2.csv"
+#input_data_file = "input/transmart.txt"
+
 
 ##-----------------------------##
 ## Preprocessing the data file ##
@@ -32,7 +34,7 @@ shutil.copy(input_data_file, "data/complete_data.csv")
 ## Run the analysis ##
 ##------------------##
 variables = holidays.get_description_of_variables("data/complete_data.csv")
-holidays.generate_all_possible_combinations(variables["qualitative"], variables["quantitative"])
+holidays.generate_all_possible_combinations(variables["qualitative"], variables["quantitative"], 10)
 
 suggestions_file = open("data/suggestions.csv", "r")
 for line in suggestions_file:
@@ -94,8 +96,6 @@ for line in suggestions_file:
 			os.remove(absolute_path_to_file)
 		else:
 			log_manager.add_entry("[!] Fail to save report for case "+str(suggestion_id)+" on a distant server")
-
-		## Check the space left on the hard drive
 
 	else:
 		## Log entry
